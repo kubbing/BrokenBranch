@@ -5,7 +5,7 @@ This is a toy project that demonstrates iOS9 bugs in [Branch](https://branch.io)
 - `ViewController` presents a modal in its `viewDidAppear:`
 - during that Branch's fingerprinting kicks in and breaks the app
 
-**The bug leaves zero-sized invisible `UIWindow` a key one and causes UIStatusBar to disappear.**
+**The bug leaves zero-sized invisible `UIWindow` as key one and causes UIStatusBar to disappear.**
 
 # Howto
 
@@ -39,7 +39,7 @@ Branch's proposed [fix](https://github.com/BranchMetrics/iOS-Deferred-Deep-Linki
 
 Proper fix would be to not use zero-sized invisible `UIWindow` at all.
 
-Temporary workaround is to put back the original UIWindow and release the hacky one:
+Temporary workaround is to put back the original `UIWindow` and release the hacky one:
 
         self.secondWindow = [[UIWindow alloc] initWithFrame:CGRectZero];
         self.secondWindow.rootViewController = windowRootController;
