@@ -5,7 +5,18 @@ This is a toy project that demonstrates iOS9 bugs in [Branch](https://branch.io)
 - `ViewController` presents a modal in its `viewDidAppear:`
 - during that Branch's fingerprinting kicks in and breaks the app
 
-**The bug causes UIStatusBar to dissappear.**
+**The bug causes UIStatusBar to disappear.**
+
+# Howto
+
+1. checkout
+2. `pod install`
+3. add your branch key to plist
+4. hit `cmd+r`
+
+Bug can be reproduces on a first launch only. You need to delete the app from simulator each app launch.
+
+# Bug description and workaround
 
 On `UIApplicationDidBecameActiveNotification` Branch creates zero-sized `UIWindow` with `rootViewController` (badly initialized), makes it a `keyWindow` and presents a modal on it. It never puts the original app's window back.
 

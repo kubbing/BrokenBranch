@@ -115,32 +115,32 @@ NSInteger const ABOUT_30_DAYS_TIME_IN_SECONDS = 60 * 60 * 24 * 30;
 //            self.requestInProgress = NO;
 //        });
         
-//        FIXED by you (this fixed the 'Unbalance calls warning' only)
-//        self.secondWindow = [[UIWindow alloc] initWithFrame:CGRectZero];
-//        self.secondWindow.rootViewController = windowRootController;
-//        [self.secondWindow makeKeyAndVisible];
-//        [self.secondWindow setAlpha:0];
-//
-//        [windowRootController presentViewController:safController animated:YES completion:^{
-//            [self.secondWindow.rootViewController dismissViewControllerAnimated:NO completion:NULL];
-//            [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
-//            self.requestInProgress = NO;
-//        }];
-        
-//        FIXED by me, you need to puth back the original UIWindow and release the Branch one
+//        "FIXED" by Branch (https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK/commit/4a15e6f7b3021b584cb01df72d1dce89672cc9ad)
         self.secondWindow = [[UIWindow alloc] initWithFrame:CGRectZero];
         self.secondWindow.rootViewController = windowRootController;
         [self.secondWindow makeKeyAndVisible];
         [self.secondWindow setAlpha:0];
-        
+
         [windowRootController presentViewController:safController animated:YES completion:^{
             [self.secondWindow.rootViewController dismissViewControllerAnimated:NO completion:NULL];
             [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
             self.requestInProgress = NO;
-            
-            [[[UIApplication sharedApplication].windows firstObject] becomeKeyWindow];
-            self.secondWindow = nil;
         }];
+        
+//        FIXED by me, you need to puth back the original UIWindow and release the Branch one
+//        self.secondWindow = [[UIWindow alloc] initWithFrame:CGRectZero];
+//        self.secondWindow.rootViewController = windowRootController;
+//        [self.secondWindow makeKeyAndVisible];
+//        [self.secondWindow setAlpha:0];
+//        
+//        [windowRootController presentViewController:safController animated:YES completion:^{
+//            [self.secondWindow.rootViewController dismissViewControllerAnimated:NO completion:NULL];
+//            [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
+//            self.requestInProgress = NO;
+//            
+//            [[[UIApplication sharedApplication].windows firstObject] becomeKeyWindow];
+//            self.secondWindow = nil;
+//        }];
     }
     else {
         self.requestInProgress = NO;
