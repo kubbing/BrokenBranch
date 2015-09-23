@@ -1,0 +1,46 @@
+# 💩 BrokenBranch 💩
+
+This is a toy project that demonstrates iOS9 bugs in [Branch](https://branch.io)'s iOS SDK (0.11.4). 
+
+- `ViewController` presents a modal in its `viewDidAppear:`
+- during that Branch's fingerprinting kicks in and breaks the app
+
+**The bug causes UIStatusBar to dissappear.**
+
+On `UIApplicationDidBecameActiveNotification` Branch creates zero-sized `UIWindow` with `rootViewController` (badly initialized), makes it a `keyWindow` and presents a modal on it. It never puts the original app's window back.
+
+        UIViewController *windowRootController = [[UIViewController alloc] init];
+
+        self.secondWindow = [[UIWindow alloc] initWithFrame:CGRectZero];
+        self.secondWindow.rootViewController = windowRootController;
+        [self.secondWindow makeKeyAndVisible];
+        [self.secondWindow setAlpha:0];
+        
+        [windowRootController presentViewController:safController animated:NO completion:NULL];
+
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.secondWindow.rootViewController dismissViewControllerAnimated:NO completion:NULL];
+            [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
+            self.requestInProgress = NO;
+        });
+        
+Branch's proposed [fix](https://github.com/BranchMetrics/iOS-Deferred-Deep-Linking-SDK/commit/4a15e6f7b3021b584cb01df72d1dce89672cc9ad) fixes Xcode warnings but does not address the `keyWindow` problem at all.
+
+Proper fix would be to not use zero-sized invisible `UIWindow` at all.
+
+Temporary workaround is to put back the original UIWindow and release the hacky one:
+
+        self.secondWindow = [[UIWindow alloc] initWithFrame:CGRectZero];
+        self.secondWindow.rootViewController = windowRootController;
+        [self.secondWindow makeKeyAndVisible];
+        [self.secondWindow setAlpha:0];
+        
+        [windowRootController presentViewController:safController animated:YES completion:^{
+            [self.secondWindow.rootViewController dismissViewControllerAnimated:NO completion:NULL];
+            [BNCPreferenceHelper preferenceHelper].lastStrongMatchDate = [NSDate date];
+            self.requestInProgress = NO;
+            
+            [[[UIApplication sharedApplication].windows firstObject] becomeKeyWindow];
+            self.secondWindow = nil;
+        }];
+

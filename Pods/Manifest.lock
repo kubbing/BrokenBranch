@@ -1,0 +1,10 @@
+PODS:
+  - Branch (0.11.4)
+
+DEPENDENCIES:
+  - Branch
+
+SPEC CHECKSUMS:
+  Branch: ec54736ab735f926bc914ddf06f61fb3496ea97c
+
+COCOAPODS: 0.38.2

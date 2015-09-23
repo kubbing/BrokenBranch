@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 
+#import "ModalViewController.h"
+
 @interface ViewController ()
 
 @end
@@ -17,6 +19,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    ModalViewController *mvc = [[ModalViewController alloc] initWithNibName:nil bundle:nil];
+    mvc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [self presentViewController:mvc animated:NO completion:nil];
 }
 
 - (void)didReceiveMemoryWarning {
